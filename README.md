@@ -58,7 +58,7 @@ We will use the `West Europe` region in this example - however, this can be amen
 ```terraform
 resource "azurerm_resource_group" "rg" {
   location = "westeurope"
-  name     = "rg-nfn-tst-we-001"
+  name     = "{resource-group-name}"
   tags = {
     owner       = "me"
     environment = "test"
@@ -76,7 +76,7 @@ Azure Functions require a storage account since they rely on Azure Storage for o
 
 ```terraform
 resource "azurerm_storage_account" "storage_acct" {
-  name                = "stnfntstwe001"
+  name                = "{storage-account-name}"
   resource_group_name = azurerm_resource_group.rg.name
   location            = azurerm_resource_group.rg.location
 
@@ -118,7 +118,7 @@ For logging purposes we are also deploying App Insights, which will allow us to 
 
 ```terraform
 resource "azurerm_application_insights" "func_app_insights" {
-  name                = "ains-nfn-tst-we-001"
+  name                = "{app-insights-name}"
   location            = azurerm_resource_group.rg.location
   resource_group_name = azurerm_resource_group.rg.name
   application_type    = "other"
@@ -137,7 +137,7 @@ As we are using the aforementioned [Python v2 programming model in Azure Functio
 
 ```terraform
 resource "azurerm_service_plan" "consumption_plan" {
-  name                = "plan-nfn-tst-we-001"
+  name                = "{service-plan-name}"
   location            = azurerm_resource_group.rg.location
   resource_group_name = azurerm_resource_group.rg.name
   os_type             = "Linux"
@@ -145,7 +145,7 @@ resource "azurerm_service_plan" "consumption_plan" {
 }
 
 resource "azurerm_linux_function_app" "naming_func" {
-  name                       = "func-nfn-tst-we-001"
+  name                       = "{function-app-name}"
   location                   = azurerm_resource_group.rg.location
   resource_group_name        = azurerm_resource_group.rg.name
   service_plan_id            = azurerm_service_plan.consumption_plan.id
@@ -190,7 +190,7 @@ We can now run `terraform init`, `terraform plan` and `terraform deploy`. If all
 Using the Azure CLI, we can also confirm that the resources exist as expected.
 
 ```azurecli
-az resource list --resource-group rg-nfn-tst-we-001 --output table
+az resource list --resource-group {resource-group-name} --output table
 ```
 
 ![Azure Resources List](images/resources_01.png)
@@ -295,7 +295,7 @@ app = func.FunctionApp()
 @app.route(route="checkNameAvailability")
 ```
 
-This will create the Function App with a name of `CheckNameAvailability` and the route, which defines the URL - in the case of above example this is `https://func-nfn-tst-we-001.azurewebsites.net/api/checknameavailability`.
+This will create the Function App with a name of `CheckNameAvailability` and the route, which defines the URL - in the case of above example this is `https://{function-app-name}.azurewebsites.net/api/checknameavailability`.
 
 Lastly, we need the main function containing the code. The function accepts two parameters, `resourceName` and `resourceType`, which are added to the corresponding variables `r_name` and `r_type`. These can be passed as parameters or json payload. Then we do check whether only `resourceName` or bothm `resourceName` and `resourceType`, or none of these are populated and return the corresponding result to the caller.
 
@@ -393,7 +393,7 @@ urllib3
 For publishing the code to our Azure Function App, we can run the following command in order to trigger the remote build:
 
 ```bash
-func azure functionapp publish func-nfn-tst-we-001
+func azure functionapp publish {function-app-name}
 ```
 
 After some time, we should see the notification `Remote build succeeded!` and the `Syncing triggers...` is successfully displaying the new function URL. If this is running into a timeout, then there might be missing dependencies in the requirements.txt or another issue with the code.
@@ -405,23 +405,23 @@ After some time, we should see the notification `Remote build succeeded!` and th
 In order to test the Function App, we would need to know the Function Key. We could either look it up through the portal or use the command line:
 
 ```bash
-func azure functionapp list-functions func-nfn-tst-we-001 --show-keys
+func azure functionapp list-functions {function-app-name} --show-keys
 ```
 
 Also from the command line, we can use `curl` to test the newly created function:
 
 ```bash
-curl -X POST https://func-nfn-tst-we-001.azurewebsites.net/api/checknameavailability \
+curl -X POST https://{function-app-name}.azurewebsites.net/api/checknameavailability \
      -H 'Content-Type: application/json' \
      -H 'x-functions-key: {FUNCTION-KEY}' \
-     -d '{"resourceName": "stnfntstwe001", "resourceType": "Microsoft.Storage/storageAccounts"}' | jq
+     -d '{"resourceName": "{storage-account-name}", "resourceType": "Microsoft.Storage/storageAccounts"}' | jq
 ```
 
 In the case of above example, the result should be false, since I used the same name for the Function Apps Storage Account.
 
 ```json
 {
-  "resource_name": "stnfntstwe001",
+  "resource_name": "{storage-account-name}",
   "available": false
 }
 ```
@@ -429,15 +429,15 @@ In the case of above example, the result should be false, since I used the same 
 If we tried with a different name, it should return `true`:
 
 ```bash
-curl -X POST https://func-nfn-tst-we-001.azurewebsites.net/api/checknameavailability \
+curl -X POST https://{function-app-name}.azurewebsites.net/api/checknameavailability \
      -H 'Content-Type: application/json' \
      -H 'x-functions-key: {FUNCTION-KEY}' \
-     -d '{"resourceName": "stnfntstwe002", "resourceType": "Microsoft.Storage/storageAccounts"}' | jq
+     -d '{"resourceName": "{unused-storage-account-name}", "resourceType": "Microsoft.Storage/storageAccounts"}' | jq
 ```
 
 ```json
 {
-  "resource_name": "stnfntstwe002",
+  "resource_name": "{unused-storage-account-name}",
   "available": true
 }
 ```

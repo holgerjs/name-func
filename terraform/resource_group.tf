@@ -1,6 +1,6 @@
 resource "azurerm_resource_group" "rg" {
   location = "westeurope"
-  name     = "rg-nfn-tst-we-001"
+  name     = "{resource-group-name}"
   tags = {
     owner       = "me"
     environment = "test"

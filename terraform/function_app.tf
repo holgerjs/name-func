@@ -1,5 +1,5 @@
 resource "azurerm_service_plan" "consumption_plan" {
-  name                = "plan-nfn-tst-we-001"
+  name                = "{service-plan-name}"
   location            = azurerm_resource_group.rg.location
   resource_group_name = azurerm_resource_group.rg.name
   os_type             = "Linux"
@@ -7,7 +7,7 @@ resource "azurerm_service_plan" "consumption_plan" {
 }
 
 resource "azurerm_linux_function_app" "naming_func" {
-  name                       = "func-nfn-tst-we-001"
+  name                       = "{function-app-name}"
   location                   = azurerm_resource_group.rg.location
   resource_group_name        = azurerm_resource_group.rg.name
   service_plan_id            = azurerm_service_plan.consumption_plan.id
