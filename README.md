@@ -6,7 +6,9 @@ Azure Function for checking available names across Azure Resources. Purpose: Lea
 
 This repository contains some code for testing and playing around with Python in Azure Functions. 
 
-> The code in this repository must not be used in production environments since it is lacking important functionality such as logging, error handling and more. It is only intended for testing and learning.
+> The code in this repository must not be used in production environments since it is lacking important functionality such as security settings, logging, error handling and more. It is only intended for testing and learning.
+
+Resources should be removed right away after testing in order to avoid costs.
 
 Also, the code is leveraging the [Python v2 programming model in Azure Functions](https://learn.microsoft.com/en-us/azure/azure-functions/functions-reference-python?tabs=asgi%2Capplication-level&pivots=python-mode-decorators), **which is currently in preview** [1].
 
@@ -131,7 +133,7 @@ Files:
 * [function_app.tf](terraform/function_app.tf)
 * [role_assignment.tf](terraform/role_assignment.tf)
 
-Since we are running Python Code, the App Service Plan must be of `os_type = "Linux"`. Furthermore, this is just for testing and we want to save costs, so we're deploying it in a [Consumption Plan](https://learn.microsoft.com/en-us/azure/azure-functions/consumption-plan) [8]. This means it is in the `Dynamic` tier and we therefore need to use the `sku_name = "Y1"` configuration in terraform.
+Since we are running Python Code, the App Service Plan must be of `os_type = "Linux"`. Furthermore, in this example we're deploying it in a [Consumption Plan](https://learn.microsoft.com/en-us/azure/azure-functions/consumption-plan) [8]. This means it is in the `Dynamic` tier and we therefore need to use the `sku_name = "Y1"` configuration in terraform.
 
 As we are using the aforementioned [Python v2 programming model in Azure Functions](https://learn.microsoft.com/en-us/azure/azure-functions/functions-reference-python?tabs=asgi%2Capplication-level&pivots=python-mode-decorators), it is important that we add `AzureWebJobsFeatureFlags = "EnableWorkerIndexing"` to the `app_settings` section. Additionally, we need `ENABLE_ORYX_BUILD = true` and `SCM_DO_BUILD_DURING_DEPLOYMENT = true` - otherwise we won't be able to use the [Remote build](https://learn.microsoft.com/en-us/azure/azure-functions/functions-deployment-technologies#remote-build) feature [10].
 
