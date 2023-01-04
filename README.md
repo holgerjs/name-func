@@ -207,7 +207,7 @@ First of all, we need to make sure that the [original Python script](https://git
 
 #### Managed Identity
 
-When running the script locally, we were simply using AzureCliCredential class from the `azure.identity` library, which would use the context of the user that is locally logged on through the Azure CLI. Obviously, this won't work with a managed identity. Fortunately, this part can be easily replaced through a different class from the same library: the [DefaultAzureCredential Class](https://learn.microsoft.com/en-us/python/api/azure-identity/azure.identity.defaultazurecredential?view=azure-python) [11].
+When running the script locally, we were simply using the `AzureCliCredential` class from the `azure.identity` library, which would use the context of the user that is locally logged on through the Azure CLI. Obviously, this won't work with a managed identity. Fortunately, this part can be easily replaced through a different class from the same library: the [DefaultAzureCredential Class](https://learn.microsoft.com/en-us/python/api/azure-identity/azure.identity.defaultazurecredential?view=azure-python) [11].
 
 We would therefore import the following libraries:
 
@@ -229,7 +229,7 @@ We can then just add the authentication part like this and as we were using the 
 credential = DefaultAzureCredential()
 ```
 
-#### Python Function Declaration
+#### Python Functions Declaration
 
 In the original script, the code was wrapped around these two functions, which can remain unchanged:
 
@@ -288,7 +288,7 @@ def check_name_availability(resource_name, resource_type=None):
 #### Code specific to the Function App
 
 The following code had to be modified to suit the Function App. 
-We are basicall defining the name and the route:
+We are basically defining the name and the route:
 
 ```python
 app = func.FunctionApp()
@@ -356,7 +356,7 @@ Files:
 * [function_app.py](code/function_app.py)
 * [requirements.txt](code/requirements.txt)
 
-We can then add the previously created code into the `function_app.py` file. Furthermore, the requirements.txt needs to be populated since we are using the remote build feature. A sample can be found in the [code](code/) folder, that includes the following:
+We can then add the previously created code into the `function_app.py` file. Furthermore, the `requirements.txt` file needs to be populated since we are using the remote build feature. A sample can be found in the [code](code/) folder, that includes the following:
 
 ```python
 # Do not include azure-functions-worker in this file
@@ -398,7 +398,7 @@ For publishing the code to our Azure Function App, we can run the following comm
 func azure functionapp publish {function-app-name}
 ```
 
-After some time, we should see the notification `Remote build succeeded!` and the `Syncing triggers...` is successfully displaying the new function URL. If this is running into a timeout, then there might be missing dependencies in the requirements.txt or another issue with the code.
+After some time, we should see the notification `Remote build succeeded!` and the `Syncing triggers...` is successfully displaying the new function URL. If this is running into a timeout, then there might be missing dependencies in the `requirements.txt` or another issue with the code.
 
 ![Successful Function Deployment](images/azure_function_02.png)
 
