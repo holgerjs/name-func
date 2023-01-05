@@ -173,7 +173,7 @@ resource "azurerm_linux_function_app" "naming_func" {
 }
 ```
 
-Lastly, it is required to assign the Function Apps' Managed Identity to a scope. For testing, I'm adding it as a reader role to the resource group scope, however, if we wanted to check for available names across multiple subscriptions, it must be added to the corresponding subscription or management group scopes.
+Lastly, it is required to assign the Function Apps' Managed Identity to a scope. For testing, I'm adding it as a reader role to the resource group scope, however, if we wanted to check for available names across multiple subscriptions, it would need to be added to the corresponding subscription or management group scopes.
 
 ```terraform
 resource "azurerm_role_assignment" "func_mi_assignment" {
